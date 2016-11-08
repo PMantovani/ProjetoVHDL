@@ -8,7 +8,7 @@ entity final is
 			level		: in STD_LOGIC_VECTOR (2 downto 0);
 			reset		: in STD_LOGIC;
 			clk		: in STD_LOGIC;
-			init		: in STD_LOGIC;
+			init		: in STD_LOGIC
 			);
 end final;
 
@@ -16,6 +16,16 @@ architecture Behavioral of final is
 
 begin
 
+process (clk, reset)
+begin
+	if (reset = '1' or counter = T) then
+		-- Timeout or reset, go to idle state
+	elsif (rising_edge(clk)) then
+		-- Rising edge of clock, change to next state
+	end if;
+	
+	
+end process;
 
 end Behavioral;
 

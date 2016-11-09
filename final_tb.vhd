@@ -68,7 +68,7 @@ BEGIN
       wait for clk_period*10; 
 
       -- insert stimulus here 
-		sw_level <= "10";
+		sw_level <= "10"; 
 		wait for 1 us;
 		start <= '1';
       wait;

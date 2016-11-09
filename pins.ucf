@@ -11,3 +11,4 @@ net leds(3)			loc = "K14";
 net leds(2)			loc = "K15";
 net leds(1)			loc = "J15";
 net leds(0)			loc = "J14";
+#net test				loc = "R4";

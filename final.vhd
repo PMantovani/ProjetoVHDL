@@ -18,7 +18,7 @@ end final;
 
 architecture Behavioral of final is
 
-type list_states is (idle, show1);--, input1);
+type list_states is (idle, show1, input1);
 --attribute enum_encoding: string;
 --attribute enum_encoding of list_states: type is "sequential";
 signal state : list_states := idle;
@@ -83,22 +83,23 @@ begin
 			when show1 =>
 				leds_enable <= '1';
 				input_enable <= '0';
---			if (sec_counter = level) then
---				next_s <= input1;
---			end if;
---		
---		-- wait1 state
---		when input1 =>
---			leds_enable <= '1';
+				
+			if (sec_counter = level) then
+				state <= input1;
+			end if;
+		
+			-- input1 state
+			when input1 =>
+				leds_enable <= '0';
+				input_enable <= '1';
+				if (buttons /= "0000") then
+					-- TODO: Implement button checking
+				end if;
 			
 			when others =>
 				leds_enable <= '0';
 				input_enable <= '0';
 		end case;
-		
-		
-		
-		
 		
 	end if;
 end process;

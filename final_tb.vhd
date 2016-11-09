@@ -19,7 +19,7 @@ ARCHITECTURE behavior OF final_tb IS
          sw_level : IN  std_logic_vector(1 downto 0);
          reset : IN  std_logic;
          clk : IN  std_logic;
-         init : IN  std_logic
+         start : IN  std_logic
         );
     END COMPONENT;
     
@@ -29,12 +29,12 @@ ARCHITECTURE behavior OF final_tb IS
    signal sw_level : std_logic_vector(1 downto 0) := (others => '0');
    signal reset : std_logic := '0';
    signal clk : std_logic := '0';
-   signal init : std_logic := '0';
+   signal start : std_logic := '0';
 
  	--Outputs
    signal leds : std_logic_vector(3 downto 0);
 
-   -- Clock period definitions
+   -- Clock period defstartions
    constant clk_period : time := 20 ns;
  
 BEGIN
@@ -46,10 +46,10 @@ BEGIN
           sw_level => sw_level,
           reset => reset,
           clk => clk,
-          init => init
+          start => start
         );
 
-   -- Clock process definitions
+   -- Clock process defstartions
    clk_process :process
    begin
 		clk <= '0';
@@ -70,7 +70,7 @@ BEGIN
       -- insert stimulus here 
 		sw_level <= "10";
 		wait for 1 us;
-		init <= '1';
+		start <= '1';
       wait;
    end process;
 

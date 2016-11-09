@@ -69,7 +69,7 @@ BEGIN
 
       -- insert stimulus here 
 		sw_level <= "10"; 
-		wait for 1 us;
+		wait for 1_500 ms;
 		start <= '1';
       wait;
    end process;

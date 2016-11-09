@@ -4,13 +4,14 @@ use IEEE.NUMERIC_STD.ALL;
 use work.my_package.all;
 
 entity final is
-	generic (T : integer := 5);
+	generic (T : integer := 5;
+				DIV : integer := 50_000_000);
 	port (buttons 	: in STD_LOGIC_VECTOR (3 downto 0);
 			leds		: out STD_LOGIC_VECTOR (3 downto 0);
 			sw_level	: in STD_LOGIC_VECTOR (1 downto 0);
 			reset		: in STD_LOGIC;
 			clk		: in STD_LOGIC;
-			init		: in STD_LOGIC
+			start		: in STD_LOGIC
 			);
 end final;
 
@@ -21,7 +22,7 @@ attribute enum_encoding: string;
 attribute enum_encoding of state: type is "sequential";
 signal current_s, next_s : state;
 signal blinkInterval : integer range 1 to 3;
-signal clk_counter : integer range 0 to 25_000_000 := 0;
+signal clk_counter : integer range 0 to DIV := 0;
 signal sec_counter : integer range 0 to 10 := 0;
 signal timeout : STD_LOGIC := '0';
 signal enableLeds : STD_LOGIC := '0';
@@ -47,7 +48,7 @@ begin
 		leds <= show_seq(sec_counter, blinkInterval, enableLeds);
 		
 		-- increment counter of seconds
-		if (clk_counter = 50_000_000) then
+		if (clk_counter = DIV) then
 			sec_counter <= sec_counter + 1;
 			clk_counter <= 0;
 		end if;
@@ -59,12 +60,12 @@ begin
 	end if;
 end process;
 
-process (current_s, buttons, init, timeout, sec_counter)
+process (current_s, buttons, start, timeout, sec_counter)
 begin 
 	case current_s is
 		-- idle state
 		when idle =>
-			if (init = '1') then
+			if (start = '1') then
 				next_s <= show1;
 				-- Sets the difficult of the game
 				if (sw_level = "00") then

@@ -80,7 +80,7 @@ begin
 		when show1 =>
 			enableLeds <= '1';
 			if (sec_counter = blinkInterval) then
-				next_s <= wait1;
+				next_s <= input1;
 			end if;
 		
 		-- wait1 state

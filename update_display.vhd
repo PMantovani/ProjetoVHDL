@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use work.my_package.all;
 
 
@@ -8,7 +8,8 @@ entity update_display is
 	port (display	: out STD_LOGIC_VECTOR (6 downto 0);
 			disp_mux	: out STD_LOGIC_VECTOR (3 downto 0);
 			clk		: in STD_LOGIC;
-			state		: in integer range 0 to 30
+			state		: in integer range 0 to 30;
+			score		: in integer range 0 to 14
 			);
 
 end update_display;
@@ -69,16 +70,47 @@ begin
 		-- every 1/2 of a second, progress
 		if (counter = 25_000_000) then
 			counter <= 0;
-			progress <= progress + 1;
-			-- implements rolling of display
-			disp1 <= disp2;
-			disp2 <= disp3;
-			disp3 <= disp4;
-			disp4 <= init_word(progress);
-			
-			if (progress = 24) then
+			-- implements rolling of display if message to be shown
+			if (state = 0) then
+				if (progress = 0) then
+					disp1 <= "1111111";
+					disp2 <= "1111111";
+					disp3 <= "1111111";
+					disp4 <= init_word(0);
+				else
+					disp1 <= disp2;
+					disp2 <= disp3;
+					disp3 <= disp4;
+					disp4 <= init_word(progress);
+				end if;
+				progress <= progress + 1;
+								
+				if (progress = 24) then
+					progress <= 0;
+				end if;
+				
+			elsif (state = 15) then
 				progress <= 0;
+				disp1 <= "1110001"; -- L
+				disp2 <= "0000001"; -- O
+				disp3 <= "0100100"; -- S
+				disp4 <= "0110000"; -- E
+				
+			else -- shows score
+				progress <= 0;
+					if (score >= 10) then
+					disp1 <= "1111111";
+					disp2 <= "1111111";
+					disp3 <= "1001111";
+					disp4 <= int_to_7seg(score);
+				else
+					disp1 <= "1111111";
+					disp2 <= "1111111";
+					disp3 <= "0000001";
+					disp4 <= int_to_7seg(score);
+				end if;
 			end if;
+			
 		
 		end if;
 	
@@ -110,3 +142,9 @@ end Behavioral;
 -- - : 1111110
 -- P : 0011000
 -- P : 0011000
+
+-- lose
+-- L : 1110001
+-- O : 0000001
+-- S : 0100100
+-- E : 0110000

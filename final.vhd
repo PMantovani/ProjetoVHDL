@@ -20,12 +20,13 @@ end final;
 
 architecture Behavioral of final is
 
-type list_states is (idle, show1, input1, show2, input2);
+type list_states is (idle, show1, input1, show2, input2, lose);
 --attribute enum_encoding: string;
 --attribute enum_encoding of list_states: type is "sequential";
 signal state : list_states := idle;
 signal state_num : integer range 0 to 30;
 signal level : integer range 1 to 3;
+signal score : integer range 0 to 14 := 0;
 signal clk_counter : integer range 0 to DIV := 0;
 signal sec_counter : integer range 0 to 30 := 0;
 signal timeout : STD_LOGIC := '0';
@@ -36,7 +37,8 @@ component update_display is
 	port (display	: out STD_LOGIC_VECTOR (6 downto 0);
 			disp_mux	: out STD_LOGIC_VECTOR (3 downto 0);
 			clk		: in STD_LOGIC;
-			state		: in integer range 0 to 30
+			state		: in integer range 0 to 30;
+			score		: in integer range 0 to 14
 			);
 end component;
 
@@ -45,9 +47,15 @@ begin
 process (clk, reset, timeout)
 
 begin
-	if (reset = '1' or timeout = '1') then
+	if (reset = '1') then
 		-- Timeout or reset, go to idle state
 		state <= idle;
+		sec_counter <= 0;
+		clk_counter <= 0;
+		timeout <= '0';
+	
+	elsif (timeout = '1') then
+		state <= lose;
 		sec_counter <= 0;
 		clk_counter <= 0;
 		timeout <= '0';
@@ -96,9 +104,12 @@ begin
 				state_num <= 1;
 				leds_enable <= '1';
 				input_enable <= '0';
+				score <= 0;
 				
 				if (sec_counter = level) then
 					state <= input1;
+					clk_counter <= 0;
+					sec_counter <= 0;
 				end if;
 		
 			-- input1 state
@@ -114,6 +125,7 @@ begin
 				state_num <= 3;
 				leds_enable <= '1';
 				input_enable <= '0';
+				score <= 1;
 				
 				if (sec_counter = 2*level) then
 					state <= input2;
@@ -126,6 +138,16 @@ begin
 					-- TODO: Implement button checking
 				end if;
 				
+			-- user lost
+			when lose =>
+				state_num <= 15;
+				leds_enable <= '0';
+				input_enable <= '0';
+				
+				if (sec_counter = 5 or start = '1') then
+					state <= idle;
+				end if;
+				
 			
 			when others =>
 				leds_enable <= '0';
@@ -135,7 +157,7 @@ begin
 	end if;
 end process;
 
-disp: update_display port map (display, disp_mux, clk, state_num);
+disp: update_display port map (display, disp_mux, clk, state_num, score);
 
 end Behavioral;
 

@@ -69,8 +69,23 @@ BEGIN
 
       -- insert stimulus here 
 		sw_level <= "10"; 
-		wait for 1_500 ms;
 		start <= '1';
+		wait for 100 ns;
+		start <= '0'; 
+		wait for 1_500 ms;
+		buttons <= "0001";
+		wait for 1 ms;
+		buttons <= "0000";
+		wait for 2_500 ms;
+		buttons <= "0001"; 
+		wait for 1 ms;
+		buttons <= "0000";
+		wait for 1_500 ms;
+		buttons <= "0001";
+		wait for 1 ms;
+		buttons <= "0000";
+		wait;
+		
       wait;
    end process;
 

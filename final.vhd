@@ -33,6 +33,7 @@ signal timeout : STD_LOGIC := '0';
 signal leds_enable : STD_LOGIC := '0';
 signal input_enable : STD_LOGIC := '0';
 signal button_result : integer range 0 to 2;
+signal button_progress : integer range 0 to 14 := 0;
 
 component update_display is
 	port (display	: out STD_LOGIC_VECTOR (6 downto 0);
@@ -44,12 +45,12 @@ component update_display is
 end component;
 
 component button_read is
-	generic (DEB_TIME : integer := 100_000);
+	generic (DEB_TIME : integer := 10_000_000);
 	port (buttons : in std_logic_vector (3 downto 0);
 			button_enable : in std_logic;
-			cur_score : in integer;
+			progress : in integer range 0 to 14;
 			clk : in std_logic;
-			read_result : out integer);
+			read_result : out integer range 0 to 2);
 end component;
 
 begin
@@ -115,6 +116,7 @@ begin
 					clk_counter <= 0;
 					sec_counter <= 0;
 					state_num <= state_num + 1;
+					button_progress <= 0;
 				end if;
 		
 			-- input state
@@ -125,11 +127,15 @@ begin
 				if (button_result = 1) then
 					state <= lose;
 				elsif (button_result = 2) then
-					state <= show;
-					clk_counter <= 0;
-					sec_counter <= 0;
-					score <= score + 1;
-					state_num <= state_num + 1;
+					if (button_progress = score) then
+						state <= show;
+						clk_counter <= 0;
+						sec_counter <= 0;
+						score <= score + 1;
+						state_num <= state_num + 1;
+					else
+						button_progress <= button_progress + 1;
+					end if;
 				else
 					state <= input;
 				end if;
@@ -153,7 +159,7 @@ begin
 end process;
 
 disp_comp: update_display port map (display, disp_mux, clk, state_num, score);
-input_comp: button_read port map (buttons, input_enable, score, clk, button_result);
+input_comp: button_read port map (buttons, input_enable, button_progress, clk, button_result);
 
 end Behavioral;
 

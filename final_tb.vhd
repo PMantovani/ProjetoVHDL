@@ -80,8 +80,8 @@ BEGIN
 		buttons <= "0001"; 
 		wait for 1 ms;
 		buttons <= "0000";
-		wait for 1_500 ms;
-		buttons <= "0001";
+		wait for 500 ms;
+		buttons <= "0010";
 		wait for 1 ms;
 		buttons <= "0000";
 		wait;

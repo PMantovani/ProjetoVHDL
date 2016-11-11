@@ -96,6 +96,13 @@ begin
 				disp3 <= "0100100"; -- S
 				disp4 <= "0110000"; -- E
 				
+			elsif (state = 16) then
+				progress <= 0;
+				disp1 <= "1111111"; --  
+				disp2 <= "1111111"; --  
+				disp3 <= "0100000"; -- G
+				disp4 <= "0100000"; -- G
+				
 			else -- shows score
 				progress <= 0;
 					if (score >= 10) then
@@ -148,3 +155,9 @@ end Behavioral;
 -- O : 0000001
 -- S : 0100100
 -- E : 0110000
+
+-- gg
+--   : 1111111
+--   : 1111111
+-- G : 0100000
+-- G : 0100000

@@ -20,7 +20,7 @@ end final;
 
 architecture Behavioral of final is
 
-type list_states is (idle, show, input, lose);
+type list_states is (idle, show, input, lose, win);
 --attribute enum_encoding: string;
 --attribute enum_encoding of list_states: type is "sequential";
 signal state : list_states := idle;
@@ -128,11 +128,17 @@ begin
 					state <= lose;
 				elsif (button_result = 2) then
 					if (button_progress = score) then
-						state <= show;
-						clk_counter <= 0;
-						sec_counter <= 0;
-						score <= score + 1;
-						state_num <= state_num + 1;
+						if (score = 5) then
+							state <= win;
+							clk_counter <= 0;
+							sec_counter <= 0;
+						else
+							state <= show;
+							clk_counter <= 0;
+							sec_counter <= 0;
+							score <= score + 1;
+							state_num <= state_num + 1;
+						end if;
 					else
 						button_progress <= button_progress + 1;
 					end if;
@@ -150,9 +156,15 @@ begin
 					state <= idle;
 				end if;
 			
-			when others =>
+			when win =>
+				state_num <= 16;
 				leds_enable <= '0';
 				input_enable <= '0';
+				
+				if (sec_counter = 5 or start = '1') then
+						state <= idle;
+				end if;
+			
 		end case;
 		
 	end if;

@@ -113,6 +113,7 @@ begin
 					button_progress <= 0;
 					show_progress <= 0;				
 				elsif ((clk_counter = 10_000_000 and blank='0') or (clk_counter = (4-level)*16_000_000 and blank='1')) then
+					-- show next sequence of the leds
 					state <= changeleds;
 					clk_counter <= 0;
 					sec_counter <= 0;
@@ -137,9 +138,9 @@ begin
 				input_enable <= '1';
 				
 				if (button_result = 1) then
+					state <= lose;
 					clk_counter <= 0;
 					sec_counter <= 0;
-					state <= lose;
 				elsif (button_result = 2) then
 					if (button_progress = score) then
 						if (score = 5) then

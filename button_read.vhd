@@ -31,10 +31,12 @@ begin
 	if (rising_edge(clk)) then
 		if (counter /= DEB_TIME) then
 			counter <= counter + 1;
-		elsif (back_debouncing = '1') then -- implements debouncing after button is released
-			back_debouncing <= '0';
-		end if;
-		
+		elsif (buttons = "0000" and debouncing = '1') then
+			-- debouncing condition is reached
+			counter <= 0;
+			debouncing <= '0';
+			back_debouncing <= '1';
+		end if;		
 	
 		if (button_enable = '1' and back_debouncing = '0') then
 			if (buttons /= "0000" and debouncing = '0') then
@@ -55,11 +57,8 @@ begin
 			read_result <= 0; -- no readings
 		end if;
 		
-		if (counter = DEB_TIME and buttons = "0000" and debouncing = '1') then
-			-- debouncing condition is reached
-			counter <= 0;
-			debouncing <= '0';
-			back_debouncing <= '1';
+		if (back_debouncing = '1') then -- implements debouncing after button is released
+			back_debouncing <= '0';
 			if (temp_correct = '1') then -- effectively returns the result
 				read_result <= 2; -- right button
 			else

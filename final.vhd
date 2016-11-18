@@ -13,8 +13,8 @@ entity final is
 			clk		: in STD_LOGIC;
 			start		: in STD_LOGIC;
 			display	: out STD_LOGIC_VECTOR (6 downto 0);
-			disp_mux : out STD_LOGIC_VECTOR (3 downto 0)
-			--test		: out STD_LOGIC
+			disp_mux : out STD_LOGIC_VECTOR (3 downto 0);
+			state_led: out std_logic_vector (2 downto 0)
 			);
 end final;
 
@@ -118,13 +118,18 @@ begin
 					state_num <= state_num + 1;
 					button_progress <= 0;
 				end if;
+				
 		
 			-- input state
 			when input =>
+				leds <= buttons;
+				state_led <= std_logic_vector(to_unsigned(button_progress, state_led'length));
 				leds_enable <= '0';
 				input_enable <= '1';
 				
 				if (button_result = 1) then
+					clk_counter <= 0;
+					sec_counter <= 0;
 					state <= lose;
 				elsif (button_result = 2) then
 					if (button_progress = score) then
@@ -152,7 +157,7 @@ begin
 				leds_enable <= '0';
 				input_enable <= '0';
 				
-				if (sec_counter = 5 or start = '1') then
+				if (sec_counter = 5) then
 					state <= idle;
 				end if;
 			

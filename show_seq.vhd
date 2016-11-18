@@ -7,10 +7,11 @@ package my_package is
 end my_package;
 
 package body my_package is
-	function show_seq (signal counter, level : integer; signal enable : STD_LOGIC) return STD_LOGIC_VECTOR is
+	function show_seq (signal counter, level : integer; signal enable : STD_LOGIC) return STD_LOGIC_VECTOR is	
 	begin
 		if (enable = '0') then return "0000";
 		-- separated in constants because of multiplication error
+		
 		elsif (level = 1) then
 			if (counter < 1) then return "0001";
 			elsif (counter < 2) then return "0010";

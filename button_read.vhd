@@ -45,10 +45,10 @@ begin
 				end if;
 			
 			else
-				read_result <= 0;
+				read_result <= 0; -- no readings
 			end if;
 		else
-			read_result <= 0;
+			read_result <= 0; -- no readings
 		end if;
 	end if;
 end process;

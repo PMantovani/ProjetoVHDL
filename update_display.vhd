@@ -8,7 +8,7 @@ entity update_display is
 	port (display	: out STD_LOGIC_VECTOR (6 downto 0);
 			disp_mux	: out STD_LOGIC_VECTOR (3 downto 0);
 			clk		: in STD_LOGIC;
-			state		: in integer range 0 to 30;
+			state		: in integer range 0 to 16;
 			score		: in integer range 0 to 14
 			);
 

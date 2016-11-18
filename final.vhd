@@ -24,11 +24,11 @@ type list_states is (idle, show, changeleds, input, lose, win);
 --attribute enum_encoding: string;
 --attribute enum_encoding of list_states: type is "sequential";
 signal state : list_states := idle;
-signal state_num : integer range 0 to 30;
+signal state_num : integer range 0 to 16;
 signal level : integer range 1 to 3;
 signal score : integer range 0 to 14 := 0;
 signal clk_counter : integer range 0 to DIV := 0;
-signal sec_counter : integer range 0 to 100 := 0;
+signal sec_counter : integer range 0 to 5 := 0;
 signal input_enable : STD_LOGIC := '0';
 signal button_result : integer range 0 to 2;
 signal button_progress : integer range 0 to 14 := 0;
@@ -109,7 +109,6 @@ begin
 					state <= input;
 					clk_counter <= 0;
 					sec_counter <= 0;
-					state_num <= state_num + 1;
 					button_progress <= 0;
 					show_progress <= 0;				
 				elsif ((clk_counter = 10_000_000 and blank='0') or (clk_counter = (4-level)*16_000_000 and blank='1')) then
@@ -137,13 +136,20 @@ begin
 				state_led <= std_logic_vector(to_unsigned(button_progress, state_led'length));
 				input_enable <= '1';
 				
-				if (button_result = 1) then
+				-- timeout reached (5 seconds)
+				if (sec_counter = T) then
+					state <= lose;
+					sec_counter <= 0;
+					clk_counter <= 0;
+				elsif (button_result = 1) then
 					state <= lose;
 					clk_counter <= 0;
 					sec_counter <= 0;
 				elsif (button_result = 2) then
+					clk_counter <= 0;
+					sec_counter <= 0;
 					if (button_progress = score) then
-						if (score = 5) then
+						if (score = 13) then
 							state <= win;
 							clk_counter <= 0;
 							sec_counter <= 0;

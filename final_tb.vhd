@@ -72,11 +72,10 @@ BEGIN
 		start <= '1';
 		wait for 100 ns;
 		start <= '0'; 
-		wait for 1_500 ms;
-		buttons <= "0010";
-		wait for 1 ms;
-		buttons <= "0000";
-		start <= '1';
+		wait for 1_000 ms;
+--		buttons <= "0001";
+--		wait for 1 ms;
+--		buttons <= "0000";
 		
 --		wait for 2_500 ms;
 --		buttons <= "0001"; 
@@ -88,7 +87,7 @@ BEGIN
 --		buttons <= "0000";
 --		wait;
 		
-      wait;
+      wait; 
    end process;
 
 END;

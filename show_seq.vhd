@@ -9,7 +9,7 @@ package body my_package is
 	function int_to_7seg (signal int : integer) return std_logic_vector is
 	variable temp : integer;
 	begin
-		if (int > 10) then temp := int - 10;
+		if (int >= 10) then temp := int - 10;
 		else temp := int;
 		end if;
 		

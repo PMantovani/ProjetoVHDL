@@ -21,8 +21,8 @@ end final;
 architecture Behavioral of final is
 
 type list_states is (standby, show, changeleds, input, lose, win);
---attribute enum_encoding: string;
---attribute enum_encoding of list_states: type is "sequential";
+attribute syn_encoding: string;
+attribute syn_encoding of list_states: type is "sequential";
 signal state : list_states := standby;
 signal state_num : integer range 0 to 16;
 signal level : integer range 1 to 3;
@@ -36,7 +36,7 @@ signal blank : std_logic := '0';
 signal show_progress : integer range 0 to 14 := 0;
 
 type leds_array is array (0 to 13) of std_logic_vector (3 downto 0);
-	constant sequence : leds_array := ("0001","0010","0100","1000",
+constant sequence : leds_array := ("0001","0010","0100","1000",
 	"0001","0010","0100","1000","0001","0010","0100","1000","0001",
 	"0010");
 
@@ -141,26 +141,26 @@ begin
 					state <= lose;
 					sec_counter <= 0;
 					clk_counter <= 0;
-				elsif (button_result = 1) then
+				elsif (button_result = 1) then -- wrong button
 					state <= lose;
 					clk_counter <= 0;
 					sec_counter <= 0;
-				elsif (button_result = 2) then
+				elsif (button_result = 2) then -- right button
 					clk_counter <= 0;
 					sec_counter <= 0;
-					if (button_progress = score) then
-						if (score = 13) then
+					if (button_progress = score) then -- finished sequence
+						if (score = 13) then -- won the game
 							state <= win;
 							clk_counter <= 0;
 							sec_counter <= 0;
-						else
+						else -- continue the game
 							state <= show;
 							clk_counter <= 0;
 							sec_counter <= 0;
 							score <= score + 1;
 							state_num <= state_num + 1;
 						end if;
-					else
+					else -- continue reading the sequence
 						button_progress <= button_progress + 1;
 					end if;
 				else
@@ -176,6 +176,7 @@ begin
 					state <= standby;
 				end if;
 			
+			-- user won!
 			when win =>
 				state_num <= 16;
 				input_enable <= '0';

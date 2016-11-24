@@ -14,7 +14,7 @@ entity update_display is
 
 end update_display;
 
-architecture Behavioral of update_display is
+	architecture Behavioral of update_display is
 
 signal counter : integer range 0 to 50_000_000 := 0;
 signal counter_mux : integer range 0 to 100_000 := 0;

@@ -88,37 +88,36 @@ begin
 				if (progress = 24) then
 					progress <= 0;
 				end if;
-				
-			elsif (state = 15) then
-				progress <= 0;
-				disp1 <= "1110001"; -- L
-				disp2 <= "0000001"; -- O
-				disp3 <= "0100100"; -- S
-				disp4 <= "0110000"; -- E
-				
-			elsif (state = 16) then
-				progress <= 0;
-				disp1 <= "1111111"; --  
-				disp2 <= "1111111"; --  
-				disp3 <= "0100000"; -- G
-				disp4 <= "0100000"; -- G
-				
-			else -- shows score
-				progress <= 0;
-					if (score >= 10) then
-					disp1 <= "1111111";
-					disp2 <= "1111111";
-					disp3 <= "1001111";
-					disp4 <= int_to_7seg(score);
-				else
-					disp1 <= "1111111";
-					disp2 <= "1111111";
-					disp3 <= "0000001";
-					disp4 <= int_to_7seg(score);
-				end if;
 			end if;
-			
+		end if;
 		
+		if (state = 15) then
+			progress <= 0;
+			disp1 <= "1110001"; -- L
+			disp2 <= "0000001"; -- O
+			disp3 <= "0100100"; -- S
+			disp4 <= "0110000"; -- E
+				
+		elsif (state = 16) then
+			progress <= 0;
+			disp1 <= "1111111"; --  
+			disp2 <= "1111111"; --  
+			disp3 <= "0100000"; -- G
+			disp4 <= "0100000"; -- G
+				
+		elsif (state /= 0) then -- shows score
+			progress <= 0;
+			if (score >= 10) then
+				disp1 <= "1111111";
+				disp2 <= "1111111";
+				disp3 <= "1001111"; -- 1
+				disp4 <= int_to_7seg(score);
+			else
+				disp1 <= "1111111";
+				disp2 <= "1111111";
+				disp3 <= "0000001"; -- 0
+				disp4 <= int_to_7seg(score);
+			end if;
 		end if;
 	
 	end if;

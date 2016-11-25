@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use IEEE.NUMERIC_STD.ALL;
 
 entity button_read is
-	generic (DEB_TIME : integer := 20_000_000);
+	generic (DEB_TIME : integer := 10_000_000);
 	port (buttons : in std_logic_vector (3 downto 0);
 			button_enable : in std_logic;
 			progress : in integer range 0 to 14;
@@ -57,8 +57,9 @@ begin
 			read_result <= 0; -- no readings
 		end if;
 		
-		if (back_debouncing = '1') then -- implements debouncing after button is released
+		if (back_debouncing = '1' and counter = DEB_TIME) then -- implements debouncing after button is released
 			back_debouncing <= '0';
+			counter <= 0;
 			if (temp_correct = '1') then -- effectively returns the result
 				read_result <= 2; -- right button
 			else

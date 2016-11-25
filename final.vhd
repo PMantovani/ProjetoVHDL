@@ -14,7 +14,12 @@ entity final is
 			start		: in STD_LOGIC;
 			display	: out STD_LOGIC_VECTOR (6 downto 0);
 			disp_mux : out STD_LOGIC_VECTOR (3 downto 0);
-			state_led: out std_logic_vector (2 downto 0)
+			state_led: out std_logic_vector (2 downto 0);
+			-- vga ports
+			vga_hs, vga_vs : out std_logic;
+			vga_red : out unsigned (2 downto 0);
+			vga_green : out unsigned (2 downto 0);
+			vga_blue : out unsigned (1 downto 0)
 			);
 end final;
 
@@ -34,6 +39,7 @@ signal button_result : integer range 0 to 2;
 signal button_progress : integer range 0 to 14 := 0;
 signal blank : std_logic := '0';
 signal show_progress : integer range 0 to 14 := 0;
+signal vga_leds : std_logic_vector (3 downto 0) := "0000";
 
 type leds_array is array (0 to 13) of std_logic_vector (3 downto 0);
 constant sequence : leds_array := ("0001","0010","0100","1000",
@@ -56,6 +62,17 @@ component button_read is
 			progress : in integer range 0 to 14;
 			clk : in std_logic;
 			read_result : out integer range 0 to 2);
+end component;
+
+component vga_control is
+	port (clk : in std_logic;
+			VGA_HS, VGA_VS: out std_logic;
+			VGA_RED: out unsigned (2 downto 0);
+			VGA_GREEN: out unsigned (2 downto 0);
+			VGA_BLUE: out unsigned (1 downto 0);
+			rst : in std_logic;
+			opcode_in: in std_logic_vector(3 downto 0)
+			);
 end component;
 
 begin
@@ -123,8 +140,10 @@ begin
 			when changeleds =>
 				if (blank = '1') then
 					leds <= "0000";
+					vga_leds <= "0000";
 				else
 					leds <= sequence(show_progress);
+					vga_leds <= sequence(show_progress);
 					show_progress <= show_progress + 1;
 				end if;
 				state <= show;
@@ -133,6 +152,7 @@ begin
 			-- input state
 			when input =>
 				leds <= buttons;
+				vga_leds <= buttons;
 				state_led <= std_logic_vector(to_unsigned(button_progress, state_led'length));
 				input_enable <= '1';
 				
@@ -149,7 +169,7 @@ begin
 					clk_counter <= 0;
 					sec_counter <= 0;
 					if (button_progress = score) then -- finished sequence
-						if (score = 13) then -- won the game
+						if (score = 5) then -- won the game
 							state <= win;
 							clk_counter <= 0;
 							sec_counter <= 0;
@@ -192,6 +212,7 @@ end process;
 
 disp_comp: update_display port map (display, disp_mux, clk, state_num, score);
 input_comp: button_read port map (buttons, input_enable, button_progress, clk, button_result);
+vga_comp: vga_control port map (clk, vga_hs, vga_vs, vga_red, vga_green, vga_blue, reset, vga_leds);
 
 end Behavioral;
 

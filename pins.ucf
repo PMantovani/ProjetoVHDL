@@ -26,3 +26,14 @@ net disp_mux(3)		loc = "F17";
 net state_led(2)		loc = "R4";
 net state_led(1)		loc = "F4";
 net state_led(0)		loc = "P15";
+# vga ports
+net vga_hs				loc = "T4";
+net vga_vs				loc = "U3";
+net vga_red(0)			loc = "R9";
+net vga_red(1)			loc = "T8";
+net vga_red(2)			loc = "R8";
+net vga_green(0)		loc = "N8";
+net vga_green(1)		loc = "P8";
+net vga_green(2)		loc = "P6";
+net vga_blue(0)		loc = "U5";
+net vga_blue(1)		loc = "U4";

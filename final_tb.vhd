@@ -68,14 +68,36 @@ BEGIN
       wait for clk_period*10; 
 
       -- insert stimulus here 
+		
+		-- win case
 		sw_level <= "10"; 
 		start <= '1';
-		wait for 100 ns;
-		start <= '0'; 
-		wait for 1_000 ms;
---		buttons <= "0001";
---		wait for 1 ms;
---		buttons <= "0000";
+		wait for 800 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000";
+		
+		wait for 1_600 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0010"; wait for 200 ms; buttons <= "0000";
+		
+		wait for 2_400 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0010"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0100"; wait for 200 ms; buttons <= "0000";
+		
+		wait for 3_200 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0010"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0100"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "1000"; wait for 200 ms; buttons <= "0000";
+		
+		wait for 4_000 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0010"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0100"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "1000"; wait for 200 ms; buttons <= "0000"; wait for 250 ms;
+		buttons <= "0001"; wait for 200 ms; buttons <= "0000";  
+		
+		
 		
 --		wait for 2_500 ms;
 --		buttons <= "0001"; 

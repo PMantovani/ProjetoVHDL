@@ -90,7 +90,7 @@ begin
 					state <= show;
 					clk_counter <= 0;
 					sec_counter <= 0;
-					state_num <= state_num + 1;
+					state_num <= 1;
 					-- Sets the difficult of the game
 					if (sw_level = "00") then
 						level <= 1; -- easy (~0.96 sec/led)

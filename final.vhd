@@ -171,7 +171,7 @@ begin
 					clk_counter <= 0;
 					sec_counter <= 0;
 					if (button_progress = score) then -- finished sequence
-						if (score = 5) then -- won the game
+						if (score = 13) then -- won the game
 							state <= win;
 							clk_counter <= 0;
 							sec_counter <= 0;
@@ -189,7 +189,7 @@ begin
 					state <= input;
 				end if;
 
-			-- user lost
+			-- player lost
 			when lose =>
 				state_num <= 15;
 				input_enable <= '0';
@@ -198,7 +198,7 @@ begin
 					state <= standby;
 				end if;
 			
-			-- user won!
+			-- player won!
 			when win =>
 				state_num <= 16;
 				input_enable <= '0';

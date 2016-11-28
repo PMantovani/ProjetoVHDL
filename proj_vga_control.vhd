@@ -61,7 +61,9 @@ port (
 	
 	rst : in std_logic;
 	
-	opcode_in : in std_logic_vector(3 downto 0)
+	opcode_in : in std_logic_vector(3 downto 0);
+	score : in integer range 0 to 14;
+	state : in integer range 0 to 16
 	
 	);
 end vga_control;
@@ -109,7 +111,8 @@ architecture Behavioral of vga_control is
 	signal ERROR_SCREEN : unsigned (7 downto 0);
 	signal WIN_SCREEN: unsigned (7 downto 0);
 	signal DEFAULT_SCREEN : unsigned (7 downto 0);
-	signal at_UP, at_DOWN, at_LEFT, at_RIGHT, at_A, at_B, at_MID : std_logic;
+	signal at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID, at_1, at_2, at_3, at_4,
+				at_5, at_6, at_7, at_8, at_9, at_10, at_11, at_12, at_13, at_14: std_logic;
 	
 			
 begin
@@ -150,47 +153,81 @@ begin
 		--So I decided to clock the flags so they wouldn't toggle as hblock/vblock changed.
 		if rising_edge(clk) then
 			
-			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 3 or vblock = 4 or vblock = 5) then
-				at_UP <= '1';
-			else
-				at_UP <= '0';
+			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 3 or vblock = 4 or vblock = 5) then at_UP <= '1';
+			else at_UP <= '0';
 			end if;
 			
-			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 9 or vblock = 10 or vblock = 11) then
-				at_DOWN <= '1';
-			else
-				at_DOWN <= '0';
+			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 9 or vblock = 10 or vblock = 11) then at_DOWN <= '1';
+			else at_DOWN <= '0';
 			end if;
 			
-			if (hblock = 1 or hblock = 2 or hblock = 3) and (vblock = 6 or vblock = 7 or vblock = 8) then
-				at_LEFT <= '1';
-			else
-				at_LEFT <= '0';
+			if (hblock = 1 or hblock = 2 or hblock = 3) and (vblock = 6 or vblock = 7 or vblock = 8) then at_LEFT <= '1';
+			else at_LEFT <= '0';
 			end if;
 			
-			if (hblock = 7 or hblock = 8 or hblock = 9) and (vblock = 6 or vblock = 7 or vblock = 8) then
-				at_RIGHT <= '1';
-			else
-				at_RIGHT <= '0';
+			if (hblock = 7 or hblock = 8 or hblock = 9) and (vblock = 6 or vblock = 7 or vblock = 8) then at_RIGHT <= '1';
+			else at_RIGHT <= '0';
 			end if;
 			
-			if (hblock = 16 or hblock = 17 or hblock = 18) and (vblock = 9 or vblock = 10 or vblock = 11) then
-				at_A <= '1';
-			else
-				at_A <= '0';
-			end if;
-		
-			if (hblock = 12 or hblock = 13 or hblock = 14) and (vblock = 9 or vblock = 10 or vblock = 11) then
-				at_B <= '1';
-			else
-				at_B <= '0';
+			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 6 or vblock = 7 or vblock = 8) then at_MID <= '1';
+			else at_MID <= '0';
 			end if;	
 			
-			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 6 or vblock = 7 or vblock = 8) then
-				at_MID <= '1';
-			else
-				at_MID <= '0';
-			end if;	
+			if (hblock = 11 and vblock = 2) then at_1 <= '1';
+			else at_1 <= '0';
+			end if;
+			
+			if (hblock = 13 and vblock = 2) then at_2 <= '1';
+			else at_2 <= '0';
+			end if;
+			
+			if (hblock = 15 and vblock = 2) then at_3 <= '1';
+			else at_3 <= '0';
+			end if;
+			
+			if (hblock = 17 and vblock = 2) then at_4 <= '1';
+			else at_4 <= '0';
+			end if;
+			
+			if (hblock = 19 and vblock = 2) then at_5 <= '1';
+			else at_5 <= '0';
+			end if;
+			
+			if (hblock = 11 and vblock = 4) then at_6 <= '1';
+			else at_6 <= '0';
+			end if;
+			
+			if (hblock = 13 and vblock = 4) then at_7 <= '1';
+			else at_7 <= '0';
+			end if;
+			
+			if (hblock = 15 and vblock = 4) then at_8 <= '1';
+			else at_8 <= '0';
+			end if;
+			
+			if (hblock = 17 and vblock = 4) then at_9 <= '1';
+			else at_9 <= '0';
+			end if;
+			
+			if (hblock = 19 and vblock = 4) then at_10 <= '1';
+			else at_10 <= '0';
+			end if;
+			
+			if (hblock = 11 and vblock = 6) then at_11 <= '1';
+			else at_11 <= '0';
+			end if;
+			
+			if (hblock = 13 and vblock = 6) then at_12 <= '1';
+			else at_12 <= '0';
+			end if;
+			
+			if (hblock = 15 and vblock = 6) then at_13 <= '1';
+			else at_13 <= '0';
+			end if;
+			
+			if (hblock = 17 and vblock = 6) then at_14 <= '1';
+			else at_14 <= '0';
+			end if;
 	
 		end if;
 	end process scan_at_button;
@@ -200,72 +237,123 @@ begin
 	--This process controlls what is color is displayed on the screen, if the pixel is at a button then 
 	--it sends the buttons color to the screen.This controls the highlighting of the button when it should
 	--should be lit. If the state is it the Start Screen or Error Screen itsends the corrisponding signals to the screen.
-	color_control : process (opcode_in, clk,at_UP, at_DOWN, at_LEFT, at_RIGHT, at_A, at_B, at_MID,START_SCREEN,ERROR_SCREEN,DEFAULT_SCREEN,WIN_SCREEN)
+	color_control : process (opcode_in, clk,at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID,at_1,
+									at_2,at_3,at_4,at_5,at_6,at_7,at_8,at_9,at_10,at_11,at_12,at_13,at_14,
+									state, score, START_SCREEN,ERROR_SCREEN,DEFAULT_SCREEN,WIN_SCREEN)
 	variable TMPCOLOR : unsigned (7 downto 0);
-	variable TMP_at : unsigned (5 downto 0);
+	variable TMP_at : unsigned (17 downto 0);
 	--variable DEFAULTBUTTONS : unsigned(7 downto 0);
 	begin
 	
 		--START_SCREEN <= "11011011";
 		--ERROR_SCREEN <= "00011111"; --TEAL
 	
-		CASE opcode_in is
-			when "1111" =>
+		CASE state is
+			when 0 =>
 				VGA_COLOR <= START_SCREEN;
-			when "0111" =>
+			when 15 =>
 				VGA_COLOR <= ERROR_SCREEN;
-			when "1001" =>
+			when 16 =>
 				VGA_COLOR <= WIN_SCREEN;
 			when others =>
 				VGA_COLOR <= TMPCOLOR;
 		END CASE;
 						
 					
-		TMP_at := at_UP & at_DOWN & at_LEFT & at_RIGHT & at_A & at_B;
+		TMP_at := at_UP & at_DOWN & at_LEFT & at_RIGHT & at_1 & at_2 & at_3 & at_4 & at_5 & at_6 &
+						at_7 & at_8 & at_9 & at_10 & at_11 & at_12 & at_13 & at_14;
 		
 		CASE TMP_at is
-			when "100000" => --at_UP
-				if opcode_in = "0010" then
-					TMPCOLOR := GREEN;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "100000000000000000" => --at_UP
+				if opcode_in = "0010" then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
 				
-			when "010000" => --at_DOWN
-				if opcode_in = "0100" then
-					TMPCOLOR := RED;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "010000000000000000" => --at_DOWN
+				if opcode_in = "0100" then TMPCOLOR := RED;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
 				
-			when "001000" => --at_LEFT
-				if opcode_in = "1000" then
-					TMPCOLOR := BLUE;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "001000000000000000" => --at_LEFT
+				if opcode_in = "1000" then TMPCOLOR := BLUE;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
 				
-			when "000100" => --at_RIGHT
-				if opcode_in = "0001" then
-					TMPCOLOR := YELLOW;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "000100000000000000" => --at_RIGHT
+				if opcode_in = "0001" then TMPCOLOR := YELLOW;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
 				
-			when "000010" => --at_A
-				if opcode_in = "0011" then
-					TMPCOLOR := GREEN;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "000010000000000000" => --at_1
+				if score >= 1 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
 				
-			when "000001" => --at_B
-				if opcode_in = "1100" then
-					TMPCOLOR := GREEN;
-				else
-					TMPCOLOR := DEFAULT_SCREEN;
+			when "000001000000000000" => --at_2
+				if score >= 2 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
 				end if;
-		
+				
+			when "000000100000000000" => --at_3
+				if score >= 3 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000010000000000" => --at_4
+				if score >= 4 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000001000000000" => --at_5
+				if score >= 5 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000100000000" => --at_6
+				if score >= 6 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000010000000" => --at_7
+				if score >= 7 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000001000000" => --at_8
+				if score >= 8 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000100000" => --at_9
+				if score >= 9 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000010000" => --at_10
+				if score >= 10 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000001000" => --at_11
+				if score >= 11 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000000100" => --at_12
+				if score >= 12 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000000010" => --at_13
+				if score >= 13 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
+			when "000000000000000001" => --at_14
+				if score >= 14 then TMPCOLOR := GREEN;
+				else TMPCOLOR := DEFAULT_SCREEN;
+				end if;
+				
 			when others => --white background
 				TMPCOLOR := DEFAULT_SCREEN;
 				
@@ -277,32 +365,26 @@ begin
 	
 	--default_display
 	--This process controllers what color each button is and which pixel to put it at.
-	default_display : process (at_UP, at_DOWN, at_LEFT, at_RIGHT, at_A, at_B, at_MID,BACKGROUNDCOLOR)
-	variable TMP_at : unsigned (6 downto 0);
+	default_display : process (at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID, BACKGROUNDCOLOR)
+	variable TMP_at : unsigned (4 downto 0);
 	begin
 
-		TMP_at := at_UP & at_DOWN & at_LEFT & at_RIGHT & at_MID & at_A & at_B;
+		TMP_at := at_UP & at_DOWN & at_LEFT & at_RIGHT & at_MID;
 		
 		CASE TMP_at is
-			when "1000000" => --at_UP
+			when "10000" => --at_UP
 				DEFAULT_SCREEN <= BLACK;
 				
-			when "0100000" => --at_DOWN
+			when "01000" => --at_DOWN
 				DEFAULT_SCREEN <= BLACK;
 								
-			when "0010000" => --at_LEFT
+			when "00100" => --at_LEFT
 				DEFAULT_SCREEN <= BLACK;
 				
-			when "0001000" => --at_RIGHT
+			when "00010" => --at_RIGHT
 				DEFAULT_SCREEN <= BLACK;
 				
-			when "0000010" => --at_A
-				DEFAULT_SCREEN <= DARKRED;
-				
-			when "0000001" => --at_B
-				DEFAULT_SCREEN <= DARKRED;
-				
-			when "0000100" => --at_MID
+			when "00001" => --at_MID
 				DEFAULT_SCREEN <= GRAY;
 			
 			when others => --white background

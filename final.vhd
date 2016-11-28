@@ -71,7 +71,9 @@ component vga_control is
 			VGA_GREEN: out unsigned (2 downto 0);
 			VGA_BLUE: out unsigned (1 downto 0);
 			rst : in std_logic;
-			opcode_in: in std_logic_vector(3 downto 0)
+			opcode_in: in std_logic_vector(3 downto 0);
+			score: in integer range 0 to 14;
+			state: in integer range 0 to 16
 			);
 end component;
 
@@ -212,7 +214,7 @@ end process;
 
 disp_comp: update_display port map (display, disp_mux, clk, state_num, score);
 input_comp: button_read port map (buttons, input_enable, button_progress, clk, button_result);
-vga_comp: vga_control port map (clk, vga_hs, vga_vs, vga_red, vga_green, vga_blue, reset, vga_leds);
+vga_comp: vga_control port map (clk, vga_hs, vga_vs, vga_red, vga_green, vga_blue, reset, vga_leds, score, state_num);
 
 end Behavioral;
 

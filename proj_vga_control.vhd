@@ -421,22 +421,8 @@ begin
 		end if;
 		
 		START_SCREEN <= DEFAULT_SCREEN;
-
-		if opcode_in = "1110" then
-			CASE count(26 downto 25) is
-				when "00" =>
-					BACKGROUNDCOLOR <= GREEN;
-				when "01" => 
-					BACKGROUNDCOLOR <= BLUE;
-				when "10" => 
-					BACKGROUNDCOLOR <= RED;
-				when others =>
-					BACKGROUNDCOLOR <= YELLOW;
-			END CASE;
-		else
-			BACKGROUNDCOLOR <= WHITE;
-		end if;
-
+		BACKGROUNDCOLOR <= WHITE;
+		
 	end process error_start_win;
 
 end Behavioral;

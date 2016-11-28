@@ -107,7 +107,6 @@ architecture Behavioral of vga_control is
 	
 	signal VGA_COLOR : unsigned (7 downto 0);
 
-	signal START_SCREEN : unsigned (7 downto 0);
 	signal ERROR_SCREEN : unsigned (7 downto 0);
 	signal WIN_SCREEN: unsigned (7 downto 0);
 	signal DEFAULT_SCREEN : unsigned (7 downto 0);
@@ -239,18 +238,15 @@ begin
 	--should be lit. If the state is it the Start Screen or Error Screen itsends the corrisponding signals to the screen.
 	color_control : process (opcode_in, clk,at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID,at_1,
 									at_2,at_3,at_4,at_5,at_6,at_7,at_8,at_9,at_10,at_11,at_12,at_13,at_14,
-									state, score, START_SCREEN,ERROR_SCREEN,DEFAULT_SCREEN,WIN_SCREEN)
+									state, score,ERROR_SCREEN,DEFAULT_SCREEN,WIN_SCREEN)
 	variable TMPCOLOR : unsigned (7 downto 0);
 	variable TMP_at : unsigned (17 downto 0);
 	--variable DEFAULTBUTTONS : unsigned(7 downto 0);
 	begin
 	
-		--START_SCREEN <= "11011011";
 		--ERROR_SCREEN <= "00011111"; --TEAL
 	
 		CASE state is
-			when 0 =>
-				VGA_COLOR <= START_SCREEN;
 			when 15 =>
 				VGA_COLOR <= ERROR_SCREEN;
 			when 16 =>
@@ -420,7 +416,6 @@ begin
 			WIN_SCREEN <= DEFAULT_SCREEN;
 		end if;
 		
-		START_SCREEN <= DEFAULT_SCREEN;
 		BACKGROUNDCOLOR <= WHITE;
 		
 	end process error_start_win;

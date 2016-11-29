@@ -14,7 +14,6 @@ entity final is
 			start		: in STD_LOGIC;
 			display	: out STD_LOGIC_VECTOR (6 downto 0);
 			disp_mux : out STD_LOGIC_VECTOR (3 downto 0);
-			state_led: out std_logic_vector (2 downto 0);
 			-- vga ports
 			vga_hs, vga_vs : out std_logic;
 			vga_red : out unsigned (2 downto 0);
@@ -155,7 +154,6 @@ begin
 			when input =>
 				leds <= buttons;
 				vga_leds <= buttons;
-				state_led <= std_logic_vector(to_unsigned(button_progress, state_led'length));
 				input_enable <= '1';
 				
 				-- timeout reached (5 seconds)

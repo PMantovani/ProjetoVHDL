@@ -23,9 +23,6 @@ net disp_mux(0)		loc = "F15";
 net disp_mux(1)		loc = "C18";
 net disp_mux(2)		loc = "H17";
 net disp_mux(3)		loc = "F17";
-net state_led(2)		loc = "R4";
-net state_led(1)		loc = "F4";
-net state_led(0)		loc = "P15";
 # vga ports
 net vga_hs				loc = "T4";
 net vga_vs				loc = "U3";

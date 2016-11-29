@@ -1,54 +1,9 @@
 ----------------------------------------------------------------------------------
--- Doug Grantham
---	525.442.31 Spring 09
---	Final Project - Simon
---
--- Project Name: 	Simon
--- Module Name:	vga_control.vhd - Behavioral 
--- 
--- Description:
---	This module controls how to display the outputs to the vga.
---
--- The vga controller accepts an input of opcodes. These codes tell the controller what to 
--- display on the screen.
--- opcode_in
--- 0000 = no_color
--- 0001 = A
--- 0010 = B
--- 0011 = UP
--- 0100 = DOWN
--- 0101 = LEFT
--- 0110 = RIGHT
--- 0111 = ERROR
--- 1000 = Start
---	1001 = Win
---
---
--- The vga signal timing is performed by the vga_controller_640_60.vhd. This is a product from
--- Ulrich Zoltán, http://www.epanorama.net/documents/pc/vga_timing.html
---
--- Dependencies:  vga_controller_640_60.vhd
---
--- Revision: 
---		2.4 - fixed a bug in the scan_at_button process, now the flags are synchronous
---		2.3 - modified the flashing on win,error screens.
---		2.2 - Added Win Screen
---		2.1 - Added START_SCREEN and ERROR_SCREEN
---		2.0 - Modified DEFAULT_SCREEN
---		1.0 - Initial Build
--- 	0.1 - File Created
+-- 									CONTROLADOR VGA
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
---use IEEE.STD_LOGIC_ARITH.ALL;
---use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.numeric_std.all;
-
----- Uncomment the following library declaration if instantiating
----- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 
 entity vga_control is
 port (
@@ -84,7 +39,10 @@ architecture Behavioral of vga_control is
 		);
 	end component;	
 	
-	--Create some default colors
+----------------------------------------------------------------------------------
+-- 	1-	DECLARAÇÃO DAS CORES E SINAIS QUE SERÃO USADOS
+----------------------------------------------------------------------------------
+
 	constant GREEN : unsigned(7 downto 0) := "00011100";
 	constant RED : unsigned(7 downto 0) := "11100000";
 	constant DARKRED : unsigned(7 downto 0) := "01100000";
@@ -122,7 +80,9 @@ begin
 	VGA_HS <= HS;
 	VGA_VS <= VS;	
 
-	--convert the hcount and vcount into 20x15 blocks
+----------------------------------------------------------------------------------
+-- 	2-	CONVERSÃO DOS CONTADORES HORIZONTAL E VERTICAL EM BLOCOS DE 20x15
+----------------------------------------------------------------------------------	
 	hblock <= TO_INTEGER(unsigned(hcount(9 downto 5)));
 	vblock <= TO_INTEGER(unsigned(vcount(9 downto 5)));
 
@@ -137,19 +97,22 @@ begin
 
 		blank => blank
 
-	); -- end vga_controller
+	); 
 	
 	
-	--scan_at_button
-	--This process determines when the pixel is at button, if it is then it sets a flag.
+----------------------------------------------------------------------------------
+-- 	3-	MONITORAMENTO DO at_button. SE CONTIVER O PIXEL SETA O FLAG
+----------------------------------------------------------------------------------	
+
 	scan_at_button : process (hblock,vblock,clk)
 	begin
 	
-		--After synthesis, sometimes things would work great and other times there would be this weird line on the screen
-		--that mapped to one of the buttons, meaning you could light up that line by pressing a button. Even if you changed
-		--nothing in the vga_controller. I think it was a bizarre timing thing where for a fraction of a sec as the values for
-		--hblock/vblock would change it would toggle the at_XXXX flag causing it to think it was at a button.
-		--So I decided to clock the flags so they wouldn't toggle as hblock/vblock changed.
+----------------------------------------------------------------------------------
+-- 	4-	FORAM COLOCADOS CLOCKS NAS FLAGS PARA EVITAR COM QUE NA TRANSIÇÃO DO 
+--			CONTADOR VERTICAL PARA O HORIZONTAL (E VICE-VERSA) O at_button PENSASSE
+--			QUE ESTAVA SETADO.
+----------------------------------------------------------------------------------
+		
 		if rising_edge(clk) then
 			
 			if (hblock = 4 or hblock = 5 or hblock = 6) and (vblock = 3 or vblock = 4 or vblock = 5) then at_UP <= '1';
@@ -232,19 +195,17 @@ begin
 	end process scan_at_button;
 	
 	
-	--color_control
-	--This process controlls what is color is displayed on the screen, if the pixel is at a button then 
-	--it sends the buttons color to the screen.This controls the highlighting of the button when it should
-	--should be lit. If the state is it the Start Screen or Error Screen itsends the corrisponding signals to the screen.
+----------------------------------------------------------------------------------
+-- 	5-	CONTROLE DE CORES 
+----------------------------------------------------------------------------------	
+	
 	color_control : process (opcode_in, clk,at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID,at_1,
 									at_2,at_3,at_4,at_5,at_6,at_7,at_8,at_9,at_10,at_11,at_12,at_13,at_14,
 									state, score,ERROR_SCREEN,DEFAULT_SCREEN,WIN_SCREEN)
 	variable TMPCOLOR : unsigned (7 downto 0);
 	variable TMP_at : unsigned (17 downto 0);
-	--variable DEFAULTBUTTONS : unsigned(7 downto 0);
-	begin
 	
-		--ERROR_SCREEN <= "00011111"; --TEAL
+	begin
 	
 		CASE state is
 			when 15 =>
@@ -359,8 +320,10 @@ begin
 		
 	end process color_control;
 	
-	--default_display
-	--This process controllers what color each button is and which pixel to put it at.
+----------------------------------------------------------------------------------
+-- 	6-	CONTROLADOR DO LAYOUT DA TELA DEFAULT
+----------------------------------------------------------------------------------
+
 	default_display : process (at_UP, at_DOWN, at_LEFT, at_RIGHT, at_MID, BACKGROUNDCOLOR)
 	variable TMP_at : unsigned (4 downto 0);
 	begin
@@ -391,11 +354,10 @@ begin
 	end process default_display;
 	
 	
-	--error_start_win
-	--This controller what is displayed during an error, win, and the start screen.
-	--When there is an error, it flashes red and black screen.
-	--When at the start screen, it cycles red,blue,green, and yellow as the backgroup of the screen(behind the buttons).
-	--When at the win screen it flashes green.
+----------------------------------------------------------------------------------
+-- 	7-	CONTROLADOR DA TELA DE VITÓRIA E DA TELA DE DERROTA
+----------------------------------------------------------------------------------	
+	
 	error_start_win : PROCESS (clk,opcode_in,DEFAULT_SCREEN)
 	variable count : unsigned(26 downto 0);
 	begin

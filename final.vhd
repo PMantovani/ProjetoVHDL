@@ -166,8 +166,6 @@ begin
 					clk_counter <= 0;
 					sec_counter <= 0;
 				elsif (button_result = 2) then -- right button
-					clk_counter <= 0;
-					sec_counter <= 0;
 					if (button_progress = score) then -- finished sequence
 						if (score = 13) then -- won the game
 							state <= win;
@@ -181,6 +179,8 @@ begin
 							state_num <= state_num + 1;
 						end if;
 					else -- continue reading the sequence
+						clk_counter <= 0;
+						sec_counter <= 0;
 						button_progress <= button_progress + 1;
 					end if;
 				end if;
@@ -189,6 +189,8 @@ begin
 			when lose =>
 				state_num <= 15;
 				input_enable <= '0';
+				leds <= "0000";
+				vga_leds <= "0000";
 				
 				if (sec_counter = 5) then
 					state <= standby;

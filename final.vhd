@@ -183,8 +183,6 @@ begin
 					else -- continue reading the sequence
 						button_progress <= button_progress + 1;
 					end if;
-				else
-					state <= input;
 				end if;
 
 			-- player lost

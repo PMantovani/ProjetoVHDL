@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use IEEE.NUMERIC_STD.ALL;
 
 entity button_read is
-	generic (DEB_TIME : integer := 20_000_000);
+	generic (DEB_TIME : integer := 30_000_000);
 	port (buttons : in std_logic_vector (3 downto 0);
 			button_enable : in std_logic;
 			progress : in integer range 0 to 14;
